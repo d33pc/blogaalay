@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="text-center bg-light p-5 rounded">
+        <h1 class="display-4">Welcome to Flask Application</h1>
+        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        {% if session.logged_in == NULL %}
+            <a href="/login" class="btn btn-primary btn-lg">Login</a>
+            <a href="/register" class="btn btn-success btn-lg">Register</a>
+        {% endif %}
+    </div>
+{% endblock %}

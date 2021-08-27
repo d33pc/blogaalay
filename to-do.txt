@@ -1,0 +1,6 @@
+1. Clean up the app.py into separate modules
+2. Customize it with your own stylesheets and javascript
+3. Add another layer of access control to delete_article (The users can create a fake html form to send post requests to /delete_article and delete other peoples articles.)
+4. Prevent users from registering the same username as other users.
+5. Add feature : (private, organization, public)
+6. Add feature : Give access to suggest changes in article.
