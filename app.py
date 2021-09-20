@@ -5,7 +5,7 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
-import registration_form
+import forms
 import article_form
 app = Flask(__name__)
 
@@ -17,9 +17,9 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-RegisterForm = registration_form.RegisterForm
-
-ArticleForm = article_form.ArticleForm
+RegisterForm = forms.RegisterForm
+LoginForm = forms.LoginForm
+ArticleForm = forms.ArticleForm
 
 @app.route('/')
 def index():
@@ -51,14 +51,15 @@ def article(id):
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate():
-        name = form.name.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
         email = form.email.data
         username = form.username.data
         password = sha256_crypt.encrypt(str(form.password.data))
         
         cur = mysql.connection.cursor()
 
-        cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
+        cur.execute("INSERT INTO users(firstname, lastname, email, username, password) VALUES(%s, %s, %s, %s)", (firstname, lastname, email, username, password))
         
         mysql.connection.commit()
 
@@ -71,9 +72,10 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm(request.form)
     if request.method == 'POST':
-        username = request.form['username']
-        password_candidate = request.form['password']
+        username = form.username.data
+        password_candidate = form.password.data
 
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
@@ -96,7 +98,7 @@ def login():
             return render_template('login.html', error=error)
         cur.close()   
     
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 def is_logged_in(f):
     @wraps(f)
