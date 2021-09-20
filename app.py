@@ -6,6 +6,7 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
 import registration_form
+import article_form
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -17,6 +18,8 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 RegisterForm = registration_form.RegisterForm
+
+ArticleForm = article_form.ArticleForm
 
 @app.route('/')
 def index():
@@ -43,16 +46,6 @@ def article(id):
     article = cur.fetchone()
     cur.close()
     return render_template('article.html', article=article)
-
-# class RegisterForm(Form):
-#     name = StringField('Name', [validators.Length(min=1, max=50)])
-#     username = StringField('Username', [validators.Length(min=4, max=25)])
-#     email = StringField('Email', [validators.Length(min=10, max=50)])
-#     password = PasswordField('Passoword', [
-#         validators.DataRequired(),
-#         validators.EqualTo('confirm', message='Passwords do not match')
-#     ])
-#     confirm = PasswordField('Confirm Password')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -139,10 +132,6 @@ def dashboard():
 
     cur.close()
 
-class ArticleForm(Form):
-    title = StringField('Title', [validators.Length(min=1, max=200)])
-    body = TextAreaField('Body', [validators.Length(min=30)])
-
 @app.route('/add_article', methods=['GET', 'POST'])
 @is_logged_in
 def add_article():
@@ -204,6 +193,14 @@ def delete_article(id):
     flash('Article Deleted', 'success')
 
     return redirect(url_for('dashboard'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 if __name__ == "__main__":
     app.secret_key = 'secret123'
