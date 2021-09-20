@@ -6,7 +6,6 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
 import forms
-import article_form
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -124,8 +123,8 @@ def dashboard():
 
     result = cur.execute("SELECT * FROM articles")
     articles = cur.fetchall()
-    for article in articles:
-        app.logger.info("body %s", article['body'])
+    # for article in articles:
+    #     app.logger.info("body %s", article['body'])
     if result > 0:
         return render_template('dashboard.html', articles=articles)
     else:
