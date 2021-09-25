@@ -4,15 +4,16 @@ from flask import url_for, render_template, request, flash, logging, redirect, s
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
+import json
 from functools import wraps
 import forms
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Bharat@12'
-app.config['MYSQL_DB'] = 'myflaskapp'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+with open('config.json') as config_file:
+    config_data = json.load(config_file)
+
+db_settings = config_data['database']
+app.config.update(db_settings)
 
 mysql = MySQL(app)
 
