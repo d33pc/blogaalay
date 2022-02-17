@@ -3,7 +3,7 @@ from markupsafe import escape
 from flask import url_for, render_template, request, flash, logging, redirect, session
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
-from passlib.hash import sha256_crypt
+from passlib.hash import sha256_crypt 
 import json
 from functools import wraps
 import forms
@@ -13,6 +13,7 @@ with open('config.json') as config_file:
     config_data = json.load(config_file)
 
 db_settings = config_data['database']
+
 app.config.update(db_settings)
 
 mysql = MySQL(app)
@@ -166,7 +167,7 @@ def edit_article(id):
 
     form = ArticleForm(request.form)
     form.title.data = article['title']
-    form.body.data = article['body']
+    form.body.data = article['body']        
 
     if request.method == 'POST' and form.validate():
         title = request.form['title']
@@ -205,5 +206,5 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 if __name__ == "__main__":
-    app.secret_key = 'secret123'
+    app.secret_key = config_data['keys']['secret_key']
     app.run(debug=True)
